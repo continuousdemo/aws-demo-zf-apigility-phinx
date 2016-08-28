@@ -1,3 +1,5 @@
+STILL UNDER DEVELOPMENT
+
 # aws-demo-zf-apigility-phinx
 
 This demo use ZF Apiligity with Phinx Database migration and deployed with AWS CodeDeploy.
