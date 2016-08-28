@@ -1,0 +1,47 @@
+<?php
+/**
+ * Local Configuration Override
+ *
+ * This configuration override file is for overriding environment-specific and
+ * security-sensitive configuration information. Copy this file without the
+ * .dist extension at the end and populate values as needed.
+ *
+ * @NOTE: This file is ignored from Git by default with the .gitignore included
+ * in ZendSkeletonApplication. This is a good practice, as it prevents sensitive
+ * credentials from accidentally being committed into version control.
+ */
+
+return array(
+    'zf-mvc-auth' => array(
+        'authentication' => array(
+            'adapters' => array(
+                'oauth' => array(
+                    'adapter' => 'ZF\\MvcAuth\\Authentication\\OAuth2Adapter',
+                    'storage' => array(
+                        'adapter' => 'pdo',
+                        'dsn' => 'mysql:dbname=@db.dbname@;host=@db.host@',
+                        'route' => '/oauth',
+                        'username' => '@db.username@',
+                        'password' => '@db.password@',
+                    ),
+                ),
+            ),
+        ),
+    ),
+    'db' => array(
+        'adapters' => array(
+            'db_application' => array(
+                'driver' => 'Pdo',
+                'dsn' => 'mysql:dbname=@db.dbname@;host=@db.host@',
+                'driver_options' => array(
+                    1002 => 'SET NAMES \'UTF8\'',
+                ),
+                'options' => array(
+                    'buffer_results' => true,
+                ),
+                'username' => '@db.username@',
+                'password' => '@db.password@',
+            ),
+        ),
+    ),
+);

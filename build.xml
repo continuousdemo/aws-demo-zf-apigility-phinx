@@ -1,0 +1,93 @@
+<project name="demoformation-api" default="help" basedir=".">
+
+	<property file="${project.basedir}/build.properties" />
+    <import file="${dir.vendor}/jguittard/jg-phing-tasks/tasks.xml" />
+    <import file="${dir.vendor}/continuousphp/aws-sdk-phing/tasks.xml" />
+    
+    <if>
+        <available file="${project.basedir}/build.local.properties" />
+        <then>
+            <property file="${project.basedir}/build.local.properties" />
+        </then>
+    </if>
+
+    
+    <target name="help" description="List available targets">
+        <exec executable="vendor/bin/phing"
+              passthru="true">
+            <arg value="-l"/>
+        </exec>
+    </target>
+
+    <!-- generate config -->
+    <target name="generate-config">
+        <copy todir="${project.basedir}/config"
+              overwrite="true">
+            <fileset dir="${project.basedir}/config">
+                <include name="**/*.local.php.dist" />
+            </fileset>
+            <mapper type="glob" from="*.local.php.dist" to="*.local.php" />
+            <filterchain>
+                <replacetokens>
+                    <token key="db.host" value="${db.host}" />
+                    <token key="db.port" value="${db.port}" />
+                    <token key="db.dbname" value="${db.dbname}" />
+                    <token key="db.username" value="${db.username}" />
+                    <token key="db.password" value="${db.password}" />
+                </replacetokens>
+            </filterchain>
+        </copy>
+    </target>
+
+    <target name="setup-phinx" description="Setup Phinx configuration">
+        <echo message="Creating Phinx config file" />
+        <loadfile property="phinx.config" file="./phinx.yml.dist">
+            <filterchain>
+                <replacetokens>
+                    <token key="env" value="${env}" />
+                    <token key="db.host" value="${db.host}" />
+                    <token key="db.port" value="${db.port}" />
+                    <token key="db.dbname" value="${db.dbname}" />
+                    <token key="db.username" value="${db.username}" />
+                    <token key="db.password" value="${db.password}" />
+                </replacetokens>
+            </filterchain>
+        </loadfile>
+        <echo message="${phinx.config}" file="./phinx.yml" />
+    </target>
+
+    <target name="drop-db">
+        <echo file="./data/db/drop.sql">DROP DATABASE IF EXISTS `${db.dbname}`;</echo>
+        <pdosqlexec url="mysql:host=${db.host}" userid="root">
+            <transaction src="./data/db/drop.sql"/>
+        </pdosqlexec>
+
+        <delete file="${project.basedir}/data/db/drop.sql" quiet="true"/>
+    </target>
+
+    <target name="init-db" description="Create Database and Grants">
+        <echo file="${project.basedir}/data/db/create.sql">
+            CREATE DATABASE IF NOT EXISTS ${db.dbname};
+            GRANT USAGE ON *.* TO '${db.username}'@'%' IDENTIFIED BY '${db.password}';
+            GRANT UPDATE,CREATE,REFERENCES,ALTER,LOCK TABLES,CREATE VIEW,CREATE
+            ROUTINE,TRIGGER,INSERT,DELETE,DROP,INDEX,CREATE TEMPORARY TABLES,EXECUTE,SHOW VIEW,ALTER ROUTINE,SELECT ON
+            `${db.dbname}`.* TO '${db.username}'@'%';
+        </echo>
+
+        <pdosqlexec url="mysql:host=${db.host}" userid="root">
+            <transaction src="${project.basedir}/data/db/create.sql"/>
+        </pdosqlexec>
+
+        <delete file="${project.basedir}/data/db/create.sql" quiet="true"/>
+    </target>
+
+    <target name="db-migration" description="Update the database version">
+        <exec command="${phinx.bin} migrate -c phinx.yml --quiet" passthru="true"/>
+    </target>
+
+    <target name="reset-db" description="Reset the Database" depends="drop-db, init-db"/>
+
+    <target name="setup"
+            description="Setup external dependencies and migrate data"
+            depends="generate-config, setup-phinx, db-migration"/>
+</project>

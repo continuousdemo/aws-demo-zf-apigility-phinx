@@ -1,0 +1,36 @@
+{
+    "name": "continuousdemo/demo-apigility",
+    "description": "Apigility-demo",
+    "require": {
+        "php": ">=5.3.23",
+        "zendframework/zendframework": "~2.4",
+        "zfcampus/zf-apigility": "~1.1",
+        "zfcampus/zf-apigility-documentation": "^1.0.5",
+        "zfcampus/zf-development-mode": "~2.0",
+        "phing/phing": "~2.14",
+        "robmorgan/phinx": "~0.6.0",
+        "jguittard/jg-phing-tasks": "~1.0",
+        "continuousphp/aws-sdk-phing": "~0.1"
+    },
+    "require-dev": {
+        "zendframework/zftool": "dev-master",
+        "zendframework/zend-developer-tools": "~1.0.0",
+        "zfcampus/zf-apigility-admin": "^1.2.1",
+        "zfcampus/zf-deploy": "~1.0",
+        "phpunit/phpunit": "^4.6",
+        "behat/behat": "~3.0",
+        "guzzlehttp/guzzle": "~5.0"
+    },
+    "suggest": {
+        "zfcampus/zf-apigility-doctrine": "zfcampus/zf-apigility-doctrine ~1.0 to create Doctrine-Connected REST services",
+        "zfcampus/zf-http-cache": "zfcampus/zf-http-cache ~1.0 to add HTTP caching to your API",
+        "zfr/zfr-cors": "zfr/zfr-cors ~1.2 to add CORS support to your API"
+    },
+    "autoload": {
+        "psr-0": {
+            "Application\\": "module/Application/src",
+            "PsApiBase\\": "module/PsApiBase/src",
+            "Example\\": "module/Example/src"
+        }
+    }
+}

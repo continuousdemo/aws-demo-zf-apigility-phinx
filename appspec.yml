@@ -1,0 +1,20 @@
+version: 0.0
+os: linux
+files:
+  - source: /
+    destination: /var/www
+permissions:
+  - object: /var/www
+    owner: "www-data"
+    group: "www-data"
+hooks:
+  BeforeInstall:
+    - location: scripts/cleanup.sh
+      timeout: 120
+  AfterInstall:
+    - location: scripts/migrate.sh
+      timeout: 180
+  ApplicationStart:
+    - location: scripts/restart-server.sh
+      timeout: 120
+      runas: root
