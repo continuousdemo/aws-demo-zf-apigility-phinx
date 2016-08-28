@@ -1,7 +1,6 @@
 <project name="demoformation-api" default="help" basedir=".">
 
-	<property file="${project.basedir}/build.properties" />
-    <import file="${dir.vendor}/jguittard/jg-phing-tasks/tasks.xml" />
+    <property file="${project.basedir}/build.properties" />
     <import file="${dir.vendor}/continuousphp/aws-sdk-phing/tasks.xml" />
     
     <if>
