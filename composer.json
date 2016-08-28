@@ -9,7 +9,6 @@
         "zfcampus/zf-development-mode": "~2.0",
         "phing/phing": "~2.14",
         "robmorgan/phinx": "~0.6.0",
-        "jguittard/jg-phing-tasks": "~1.0",
         "continuousphp/aws-sdk-phing": "~0.1"
     },
     "require-dev": {
