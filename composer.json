@@ -2,7 +2,7 @@
     "name": "continuousdemo/demo-apigility",
     "description": "Apigility-demo",
     "require": {
-        "php": ">=5.3.23",
+        "php": ">=5.6",
         "zendframework/zendframework": "~2.4",
         "zfcampus/zf-apigility": "~1.1",
         "zfcampus/zf-apigility-documentation": "^1.0.5",
