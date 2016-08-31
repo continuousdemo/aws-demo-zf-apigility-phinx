@@ -9,7 +9,8 @@
         "zfcampus/zf-development-mode": "~2.0",
         "phing/phing": "~2.14",
         "robmorgan/phinx": "~0.6.0",
-        "continuousphp/aws-sdk-phing": "~0.1"
+        "continuousphp/aws-sdk-phing": "~0.1",
+        "rwoverdijk/assetmanager": "^1.7"
     },
     "require-dev": {
         "zendframework/zftool": "dev-master",

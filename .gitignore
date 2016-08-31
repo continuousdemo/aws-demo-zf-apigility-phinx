@@ -19,3 +19,4 @@ data/cache/*
 html
 build.local.properties
 phinx.yml
+composer.phar
