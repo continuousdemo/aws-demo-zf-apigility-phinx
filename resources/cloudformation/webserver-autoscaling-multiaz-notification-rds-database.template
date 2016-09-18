@@ -5,7 +5,7 @@
 		"InstanceType":{
 			"Description":"WebServer EC2 instance type",
 			"Type":"String",
-			"Default":"t2.small",
+			"Default":"t2.micro",
 			"AllowedValues":[
 				"t1.micro",
 				"t2.nano",
@@ -54,14 +54,16 @@
 			"MinLength":"8",
 			"MaxLength":"41",
 			"AllowedPattern":"[a-zA-Z0-9]*"
+		},
+		"S3AppsBucket":{
+			"Description":"The S3 Application Bucket",
+			"Default":"mycompany-package-testing/testing",
+			"Type":"String"
 		}
 		
 	},
 	"Mappings":{
 		"AWSInstanceType2Arch":{
-			"t1.micro":{
-				"Arch":"PV64"
-			},
 			"t2.nano":{
 				"Arch":"HVM64"
 			},
@@ -76,85 +78,42 @@
 			},
 			"t2.large":{
 				"Arch":"HVM64"
-			},
-			"m1.small":{
-				"Arch":"PV64"
-			},
-			"m1.medium":{
-				"Arch":"PV64"
-			},
-			"m1.large":{
-				"Arch":"PV64"
-			},
-			"m1.xlarge":{
-				"Arch":"PV64"
-			},
-			"m2.xlarge":{
-				"Arch":"PV64"
-			},
-			"m2.2xlarge":{
-				"Arch":"PV64"
-			},
-			"m2.4xlarge":{
-				"Arch":"PV64"
 			}
 			
 		},
 		"AWSRegionArch2AMI":{
 			"us-east-1":{
-				"PV64":"ami-2a69aa47",
-				"HVM64":"ami-6869aa05",
-				"HVMG2":"ami-2e5e9c43"
+				"HVM64":"ami-74a6da63"
 			},
 			"us-west-2":{
-				"PV64":"ami-7f77b31f",
-				"HVM64":"ami-7172b611",
-				"HVMG2":"ami-83b770e3"
+				"HVM64":"ami-7172b611"
 			},
 			"us-west-1":{
-				"PV64":"ami-a2490dc2",
-				"HVM64":"ami-31490d51",
-				"HVMG2":"ami-fd76329d"
+				"HVM64":"ami-31490d51"
 			},
 			"eu-west-1":{
-				"PV64":"ami-4cdd453f",
-				"HVM64":"ami-f9dd458a",
-				"HVMG2":"ami-b9bd25ca"
+				"HVM64":"ami-f9dd458a"
 			},
 			"eu-central-1":{
-				"PV64":"ami-6527cf0a",
-				"HVM64":"ami-ea26ce85",
-				"HVMG2":"ami-7f04ec10"
+				"HVM64":"ami-ea26ce85"
 			},
 			"ap-northeast-1":{
-				"PV64":"ami-3e42b65f",
-				"HVM64":"ami-374db956",
-				"HVMG2":"ami-e0ee1981"
+				"HVM64":"ami-374db956"
 			},
 			"ap-northeast-2":{
-				"PV64":"NOT_SUPPORTED",
-				"HVM64":"ami-2b408b45",
-				"HVMG2":"NOT_SUPPORTED"
+				"HVM64":"ami-2b408b45"
 			},
 			"ap-southeast-1":{
-				"PV64":"ami-df9e4cbc",
-				"HVM64":"ami-a59b49c6",
-				"HVMG2":"ami-0cb5676f"
+				"HVM64":"ami-a59b49c6"
 			},
 			"ap-southeast-2":{
-				"PV64":"ami-63351d00",
-				"HVM64":"ami-dc361ebf",
-				"HVMG2":"ami-a71c34c4"
+				"HVM64":"ami-dc361ebf"
 			},
 			"sa-east-1":{
-				"PV64":"ami-1ad34676",
-				"HVM64":"ami-6dd04501",
-				"HVMG2":"NOT_SUPPORTED"
+				"HVM64":"ami-6dd04501"
 			},
 			"cn-north-1":{
-				"PV64":"ami-77559f1a",
-				"HVM64":"ami-8e6aa0e3",
-				"HVMG2":"NOT_SUPPORTED"
+				"HVM64":"ami-8e6aa0e3"
 			}
 			
 		}
@@ -170,6 +129,90 @@
 							"Ref":"OperatorEMail"
 						},
 						"Protocol":"email"
+					}
+					
+				]
+				
+			}
+			
+		},
+		"WebServerRole":{
+			"Type":"AWS::IAM::Role",
+			"Properties":{
+				"Path":"/application/",
+				"AssumeRolePolicyDocument":{
+					"Statement":[
+						{
+							"Effect":"Allow",
+							"Principal":{
+								"Service":[
+									"ec2.amazonaws.com"
+								]
+								
+							},
+							"Action":"sts:AssumeRole"
+						}
+						
+					]
+					
+				},
+				"Policies":[
+					{
+						"PolicyName":"CodeDeploy",
+						"PolicyDocument":{
+							"Version":"2012-10-17",
+							"Statement":[
+								{
+									"Effect":"Allow",
+									"Action":[
+										"autoscaling:Describe*",
+										"autoscaling:EnterStandby",
+										"autoscaling:ExitStandby"
+									],
+									"Resource":"*"
+								},
+								{
+									"Effect":"Allow",
+									"Action":[
+										"s3:Get*",
+										"s3:List*"
+									],
+									"Resource":{
+										"Fn::Join":[
+											"",
+											[
+												"arn:aws:s3:::",
+												{
+													"Ref":"S3AppsBucket"
+												}
+												,
+												"/*"
+											]
+											
+										]
+										
+									}
+									
+								}
+								
+							]
+							
+						}
+						
+					}
+					
+				]
+				
+			}
+			
+		},
+		"WebServerProfile":{
+			"Type":"AWS::IAM::InstanceProfile",
+			"Properties":{
+				"Path":"/application/",
+				"Roles":[
+					{
+						"Ref":"WebServerRole"
 					}
 					
 				]
@@ -205,22 +248,6 @@
 						"autoscaling:EC2_INSTANCE_TERMINATE_ERROR"
 					]
 					
-				}
-				
-			},
-			"CreationPolicy":{
-				"ResourceSignal":{
-					"Timeout":"PT15M",
-					"Count":"1"
-				}
-				
-			},
-			"UpdatePolicy":{
-				"AutoScalingRollingUpdate":{
-					"MinInstancesInService":"1",
-					"MaxBatchSize":"1",
-					"PauseTime":"PT15M",
-					"WaitOnResourceSignals":"true"
 				}
 				
 			}
@@ -261,40 +288,23 @@
 				"InstanceType":{
 					"Ref":"InstanceType"
 				},
+				"IamInstanceProfile":{
+					"Ref":"WebServerProfile"
+				},
 				"UserData":{
 					"Fn::Base64":{
 						"Fn::Join":[
 							"",
 							[
 								"#!/bin/bash -xe\n",
-								"/opt/aws/bin/cfn-init -v ",
-								"         --stack ",
-								{
-									"Ref":"AWS::StackName"
-								},
-								"         --resource LaunchConfig ",
-								"         --region ",
-								{
-									"Ref":"AWS::Region"
-								},
-								"\n",
-								"/opt/aws/bin/cfn-signal -e $? ",
-								"         --stack ",
-								{
-									"Ref":"AWS::StackName"
-								},
-								"         --resource WebServerGroup ",
-								"         --region ",
-								{
-									"Ref":"AWS::Region"
-								},
-								"\n",
+								"mkdir -p /usr/local/etc/app/\n",
 								"echo 'db.host=",
 								{
 									"Fn::GetAtt":[
-										"MyDB",
+										"RdsDBInstance",
 										"Endpoint.Address"
 									]
+									
 								},
 								"' >> /usr/local/etc/app/app.tmp.ini",
 								"\n",
@@ -302,16 +312,17 @@
 								"\n",
 								"echo 'db.user=",
 								{
-									"Ref":"RdsUserName"
+									"Ref":"RdsDBUserName"
 								},
 								"' >> /usr/local/etc/app/app.tmp.ini",
 								"\n",
 								"echo 'db.password=",
 								{
-									"Ref":"RdsPassword"
+									"Ref":"RdsDBPassword"
 								},
 								"' >> /usr/local/etc/app/app.tmp.ini",
-								"\n"
+								"\n",
+								"cp /usr/local/etc/app/app.tmp.ini /usr/local/etc/app/app.ini\n"
 							]
 							
 						]
@@ -423,7 +434,7 @@
 					
 				],
 				"HealthCheck":{
-					"Target":"HTTP:80/",
+					"Target":"TCP:80",
 					"HealthyThreshold":"3",
 					"UnhealthyThreshold":"5",
 					"Interval":"30",
@@ -476,9 +487,9 @@
 		"RdsDBInstance":{
 			"Type":"AWS::RDS::DBInstance",
 			"Properties":{
-				"DBName":"skeleton"
+				"DBName":"skeleton",
 				"AllocatedStorage":"5",
-				"DBInstanceClass":"db.t2.small",
+				"DBInstanceClass":"db.t2.micro",
 				"Engine":"MySQL",
 				"MasterUsername":{
 					"Ref":"RdsDBUserName"
@@ -524,7 +535,7 @@
 						"",
 						{
 							"Fn::GetAtt":[
-								"MyDB",
+								"RdsDBInstance",
 								"Endpoint.Address"
 							]
 							
@@ -532,7 +543,7 @@
 						":",
 						{
 							"Fn::GetAtt":[
-								"MyDB",
+								"RdsDBInstance",
 								"Endpoint.Port"
 							]
 							

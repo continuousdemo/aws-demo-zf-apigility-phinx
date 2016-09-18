@@ -1,5 +1,5 @@
 #!/bin/bash
-cd /var/www/html
+cd /var/www
 
 while [ ! -f /usr/local/etc/app/app.ini ]
 do
