@@ -83,7 +83,7 @@
 		},
 		"AWSRegionArch2AMI":{
 			"us-east-1":{
-				"HVM64":"ami-74a6da63"
+				"HVM64":"ami-ba98e7ad"
 			},
 			"us-west-2":{
 				"HVM64":"ami-7172b611"
@@ -250,8 +250,8 @@
 					
 				}
 				
-			}
-			
+			},
+			"DependsOn":"DBInstance"
 		},
 		"LaunchConfig":{
 			"Type":"AWS::AutoScaling::LaunchConfiguration",
@@ -301,7 +301,7 @@
 								"echo 'db.host=",
 								{
 									"Fn::GetAtt":[
-										"RdsDBInstance",
+										"DBInstance",
 										"Endpoint.Address"
 									]
 									
@@ -310,7 +310,7 @@
 								"\n",
 								"echo 'db.name=skeleton' >> /usr/local/etc/app/app.tmp.ini",
 								"\n",
-								"echo 'db.user=",
+								"echo 'db.username=",
 								{
 									"Ref":"RdsDBUserName"
 								},
@@ -484,7 +484,20 @@
 			}
 			
 		},
-		"RdsDBInstance":{
+		"DBSecurityGroup":{
+			"Type":"AWS::RDS::DBSecurityGroup",
+			"Properties":{
+				"DBSecurityGroupIngress":[
+					{
+						"EC2SecurityGroupName":{
+							"Ref":"InstanceSecurityGroup"
+						}
+					}
+				],
+				"GroupDescription":"WebServer Access"
+			}
+		},
+		"DBInstance":{
 			"Type":"AWS::RDS::DBInstance",
 			"Properties":{
 				"DBName":"skeleton",
@@ -496,7 +509,13 @@
 				},
 				"MasterUserPassword":{
 					"Ref":"RdsDBPassword"
-				}
+				},
+				"DBSecurityGroups":[
+					{
+						"Ref":"DBSecurityGroup"
+					}
+					
+				]
 				
 			},
 			"DeletionPolicy":"Snapshot"
@@ -535,7 +554,7 @@
 						"",
 						{
 							"Fn::GetAtt":[
-								"RdsDBInstance",
+								"DBInstance",
 								"Endpoint.Address"
 							]
 							
@@ -543,7 +562,7 @@
 						":",
 						{
 							"Fn::GetAtt":[
-								"RdsDBInstance",
+								"DBInstance",
 								"Endpoint.Port"
 							]
 							
