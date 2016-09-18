@@ -30,7 +30,7 @@
                 <replacetokens>
                     <token key="db.host" value="${db.host}" />
                     <token key="db.port" value="${db.port}" />
-                    <token key="db.dbname" value="${db.dbname}" />
+                    <token key="db.name" value="${db.name}" />
                     <token key="db.username" value="${db.username}" />
                     <token key="db.password" value="${db.password}" />
                 </replacetokens>
@@ -46,7 +46,7 @@
                     <token key="env" value="${env}" />
                     <token key="db.host" value="${db.host}" />
                     <token key="db.port" value="${db.port}" />
-                    <token key="db.dbname" value="${db.dbname}" />
+                    <token key="db.name" value="${db.name}" />
                     <token key="db.username" value="${db.username}" />
                     <token key="db.password" value="${db.password}" />
                 </replacetokens>
@@ -56,7 +56,7 @@
     </target>
 
     <target name="drop-db">
-        <echo file="./data/db/drop.sql">DROP DATABASE IF EXISTS `${db.dbname}`;</echo>
+        <echo file="./data/db/drop.sql">DROP DATABASE IF EXISTS `${db.name}`;</echo>
         <pdosqlexec url="mysql:host=${db.host}" userid="root">
             <transaction src="./data/db/drop.sql"/>
         </pdosqlexec>
@@ -66,11 +66,11 @@
 
     <target name="init-db" description="Create Database and Grants">
         <echo file="${project.basedir}/data/db/create.sql">
-            CREATE DATABASE IF NOT EXISTS ${db.dbname};
+            CREATE DATABASE IF NOT EXISTS ${db.name};
             GRANT USAGE ON *.* TO '${db.username}'@'%' IDENTIFIED BY '${db.password}';
             GRANT UPDATE,CREATE,REFERENCES,ALTER,LOCK TABLES,CREATE VIEW,CREATE
             ROUTINE,TRIGGER,INSERT,DELETE,DROP,INDEX,CREATE TEMPORARY TABLES,EXECUTE,SHOW VIEW,ALTER ROUTINE,SELECT ON
-            `${db.dbname}`.* TO '${db.username}'@'%';
+            `${db.name}`.* TO '${db.username}'@'%';
         </echo>
 
         <pdosqlexec url="mysql:host=${db.host}" userid="root">

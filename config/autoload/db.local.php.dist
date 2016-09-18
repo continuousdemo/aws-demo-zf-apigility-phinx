@@ -19,7 +19,7 @@ return array(
                     'adapter' => 'ZF\\MvcAuth\\Authentication\\OAuth2Adapter',
                     'storage' => array(
                         'adapter' => 'pdo',
-                        'dsn' => 'mysql:dbname=@db.dbname@;host=@db.host@',
+                        'dsn' => 'mysql:dbname=@db.name@;host=@db.host@',
                         'route' => '/oauth',
                         'username' => '@db.username@',
                         'password' => '@db.password@',
@@ -32,7 +32,7 @@ return array(
         'adapters' => array(
             'db_application' => array(
                 'driver' => 'Pdo',
-                'dsn' => 'mysql:dbname=@db.dbname@;host=@db.host@',
+                'dsn' => 'mysql:dbname=@db.name@;host=@db.host@',
                 'driver_options' => array(
                     1002 => 'SET NAMES \'UTF8\'',
                 ),

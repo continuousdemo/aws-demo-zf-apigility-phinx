@@ -4,11 +4,11 @@ paths:
 
 environments:
     default_migration_table: phinxlog
-    default_database: @db.dbname@
-    @db.dbname@:
+    default_database: @db.name@
+    @db.name@:
         adapter: mysql
         host: @db.host@
-        name: @db.dbname@
+        name: @db.name@
         user: @db.username@
         pass: '@db.password@'
         port: 3306
