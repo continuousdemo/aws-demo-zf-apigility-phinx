@@ -1,8 +1,10 @@
-STILL UNDER DEVELOPMENT
-
 # aws-demo-zf-apigility-phinx
 
 This demo use ZF Apiligity with Phinx Database migration and deployed with AWS CodeDeploy.
+
+## Tutorial
+
+Visit our Tutorial [Deploy with AWS - Part 1 : CodeDeploy](https://continuousphp.com/tutorial/deploy-with-aws-part-1-codedeploy/) to create the AWS infrastructure, configure continuousphp and AWS CodeDeploy to create your development pipeline.
 
 ## Configure for local development:
 
