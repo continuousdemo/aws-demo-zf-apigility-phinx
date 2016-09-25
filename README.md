@@ -1,3 +1,5 @@
+[![Build Status](https://status.continuousphp.com/git-hub/continuousdemo/aws-demo-zf-apigility-phinx?token=0882c9e4-877f-4ecb-9625-2ce222eae2c7)](https://continuousphp.com/git-hub/continuousdemo/aws-demo-zf-apigility-phinx)
+
 # aws-demo-zf-apigility-phinx
 
 This demo use ZF Apiligity with Phinx Database migration and deployed with AWS CodeDeploy.
